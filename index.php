@@ -259,7 +259,15 @@
                                  <p><?php 
                                     if (isset($gotermrel) && $gotermrel != null){
                                        echo $gotermrel;
+                                   }
+                                    else {
+                                       echo '';
                                     }
+                                    ?></p>
+                                 <p><?php 
+                                    if (isset($numRel) && $numRel != null){
+                                       echo $numRel;
+                                    }                        
                                     else {
                                        echo '';
                                     }
