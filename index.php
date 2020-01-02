@@ -49,7 +49,7 @@
                         </nav>
                         <div class="active-visitor-wrapper">
                            <div class="container center_div">
-                              <form id="gotermrel" class="form-inline" method="post"
+                              <form id="gotermrel"  method="post"
                                  action="index.php">
                                  <div class="form-group mb-2">
                                     Le terme
@@ -57,6 +57,13 @@
                                  <div class="form-group mx-sm-3 mb-2">
                                     <input id="gotermrel" type="text" class="form-control input-sm"
                                        name="gotermrel" placeholder="Entrez le terme" require>
+                                 </div>
+                                 <div class="form-group mb-2">
+                                    Num&eacute;ro de relation
+                                 </div>
+                                 <div class="form-group mx-sm-3 mb-2">
+                                    <input id="rel" type="text" class="form-control input-sm" name="rel" size=10
+                                    placeholder="Entrez le numéro de la relation">
                                  </div>
                                  <button id="gotermsubmit" type="submit" class="btn btn-primary btn-sm mb-2"
                                     name="gotermsubmit" value="Chercher">Chercher</button>
@@ -71,11 +78,11 @@
                   <div class="col-lg-4">
                      <div class="right-panel">
                         <h6 class="slim-card-title">Options</h6>
-                        <div class="form-group">
+                        <!--<div class="form-group">
                            <label>Num&eacute;ro de relation</label>
                            <input id="rel" type="text" class="form-control" name="rel" size=10
                               placeholder="Entrez le numéro de la relation">
-                        </div>
+                        </div>-->
                         <div class="form-group form-check">
                            <input type="checkbox" class="form-check-input" id="relout" name="relout" ng-model="relout">
                            <label class="form-check-label" for="relout">Pas de relations sortantes</label>
@@ -84,6 +91,7 @@
                            <input type="checkbox" class="form-check-input" id="relin" name="relin" ng-model="relin">
                            <label class="form-check-label" for="relin">Pas de relations entrantes</label>
                         </div>
+                        <a href="http://www.jeuxdemots.org/jdm-about-detail-relations.php" class="card-link">Types de relations</a>   
                      </div>
                      <!-- right-panel -->
                   </div>
@@ -94,8 +102,9 @@
             <?php
                if (isset($_REQUEST['gotermsubmit'])) {
                    $gotermrel = $_POST['gotermrel'];
-               
-                   $url = "http://www.jeuxdemots.org/rezo-dump.php?gotermsubmit=Chercher&gotermrel=" . $gotermrel . "&rel=";
+                   $numRel = $_POST['rel'];  
+                   
+                   $url = "http://www.jeuxdemots.org/rezo-dump.php?gotermsubmit=Chercher&gotermrel=" . $gotermrel . "&rel=".$numRel;
                
                    $ch = curl_init($url);
                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -187,7 +196,10 @@
                    $reloutArray = null;
                    foreach ($outputrelout as $line) {
                        foreach (explode("\n", $line) as $row) { // split the content by return then newline
-                           $reloutArray[] = explode(";", $row); // split each row by semi-colon then space
+                           //$reloutArray[] = explode(";", $row);  // split each row by semi-colon then space
+                           $test = explode(";", $row);
+                           if($test[5]>0)
+                              $reloutArray[]= $test;
                        }
                    }
                
@@ -200,7 +212,10 @@
                    $relinArray = null;
                    foreach ($outputrelin as $line) {
                        foreach (explode("\n", $line) as $row) { // split the content by return then newline
-                           $relinArray[] = explode(";", $row); // split each row by semi-colon then space
+                           //$relinArray[] = explode(";", $row); // split each row by semi-colon then space
+                           $test = explode(";", $row);
+                           if($test[5]>0)
+                              $relinArray[]=$test;
                        }
                    }
                
@@ -299,38 +314,46 @@
                      <div class="card-body">
                         <h5 class="card-title">Les relations sortantes</h5>
                         <div class="table-responsive">
-                           <table class="table table-striped table-bordered">
+                           <table class="table table-striped table-bordered" id="relOut">
                               <thead>
                                  <tr>
-                                    <td>id</td>
-                                    <td>node1</td>
-                                    <td>node2</td>
-                                    <td>type</td>
-                                    <td>w</td>
+                                    <td>noeud1</td>
+                                    <td>noeud2</td>
+                                    <td>typeRel</td>
+                                    <td>poidsRel</td>
                                  </tr>
                               </thead>
                               <?php 
                                  utf8_encode_deep($reloutArray);
                                  utf8_encode_deep($result2);
+                                 utf8_encode_deep($result3);
                                    foreach ($reloutArray as $row)
                                   {
                                      $node1 = null;
                                      $node2 = null;
+                                     $relationType=null;
                                  
                                      foreach($result2 as $line){
                                         if($line[1] == $row[2]){
                                             $node1 = $line[2];
+                                            //$node1 = $line[3];
                                         }
                                         if($line[1] == $row[3]){
                                             $node2 = $line[2];
+                                            //$node2 = $line[3];
                                         }
+                                    }
+
+                                    foreach($result3 as $index){
+                                       if($index[1] == $row[4]){
+                                          $relationType=$index[2];
+                                       }
                                     }
                                       echo '<tr>';
                                     
-                                          echo '<td>'.$row[1].'</td>';
-                                          echo '<td>'.$row[2].'</td>';
-                                          echo '<td>'.$row[3].'</td>';
-                                          echo '<td>'.$row[4].'</td>';
+                                          echo '<td>'.$node1.'</td>';
+                                          echo '<td>'.$node2.'</td>';
+                                          echo '<td>'.$relationType.'</td>';
                                           echo '<td>'.$row[5].'</td>';
                                               
                                       echo '</tr>';
@@ -346,29 +369,63 @@
                      <div class="card-body">
                         <h5 class="card-title">Les relations entrantes</h5>
                         <div class="table-responsive">
-                           <table class="table table-striped table-bordered">
+                           <table class="table table-striped table-bordered" id="relIn">
                               <thead>
                                  <tr>
-                                    <td>id</td>
-                                    <td>node1</td>
-                                    <td>node2</td>
-                                    <td>type</td>
-                                    <td>w</td>
+                                    <td>noeud1</td>
+                                    <td>noeud2</td>
+                                    <td>typeRel</td>
+                                    <td>poidsRel</td>
                                  </tr>
                               </thead>
-                              <?php 
+                              <?php
+                              utf8_encode_deep($reloutArray);
+                              utf8_encode_deep($result2);
+                              utf8_encode_deep($result3);
+                                foreach ($relinArray as $row)
+                               {
+                                  $node1 = null;
+                                  $node2 = null;
+                                  $relationType = null;
+                                  foreach($result2 as $line){
+                                     if($line[1] == $row[2]){
+                                         $node1 = $line[2];
+                                         //$node1 = $line[3];
+                                     }
+                                     if($line[1] == $row[3]){
+                                         $node2 = $line[2];
+                                         //$node2 = $line[3];
+                                     }
+                                 }
+
+                                 foreach($result3 as $index){
+                                    if($index[1] == $row[4]){
+                                       $relationType=$index[2];
+                                    }
+                                 }
+                                   echo '<tr>';
+                                 
+                                       echo '<td>'.$node1.'</td>';
+                                       echo '<td>'.$node2.'</td>';
+                                       echo '<td>'.$relationType.'</td>';
+                                       echo '<td>'.$row[5].'</td>';
+                                           
+                                   echo '</tr>';
+                               } 
+                                    
+                              /*
                                  foreach ($relinArray as $row)
                                  {
                                     echo '<tr>';
                                   
                                         echo '<td>'.$row[1].'</td>';
-                                        echo '<td>'.$row[2].'</td>';
-                                        echo '<td>'.$row[3].'</td>';
+                                        echo '<td>'.$node1.'</td>';
+                                        echo '<td>'.$node2.'</td>';
                                         echo '<td>'.$row[4].'</td>';
                                         echo '<td>'.$row[5].'</td>';
                                             
                                     echo '</tr>';
-                                 } 
+                                 } */
                                  ?>    
                            </table>
                         </div>
@@ -390,5 +447,11 @@
       <script src="./app/assets/js/jquery/jquery-2.1.1.min.js"></script>
       <script src="./app/assets/js/bootstrap/js/bootstrap.min.js"></script>
       <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.20/datatables.min.js"></script>
+      <script type="text/javascript" >
+         $(document).ready(function() {
+            $('#relOut').DataTable();
+            $('#relIn').DataTable();
+         });
+      </script>
    </body>
 </html>
