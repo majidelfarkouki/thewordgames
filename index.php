@@ -343,24 +343,22 @@
                                  
                                      foreach($result2 as $line){
                                         if($line[1] == $row[2]){
-                                            $node1 = $line[2];
-                                            //$node1 = $line[3];
+                                            $node1 = trim($line[2],"''");
                                         }
                                         if($line[1] == $row[3]){
-                                            $node2 = $line[2];
-                                            //$node2 = $line[3];
-                                        }
+                                            $node2 = trim($line[2],"''");
+                                       }
                                     }
 
                                     foreach($result3 as $index){
                                        if($index[1] == $row[4]){
-                                          $relationType=$index[2];
+                                          $relationType=trim($index[2],"''");
                                        }
                                     }
                                       echo '<tr>';
                                     
                                           echo '<td>'.$node1.'</td>';
-                                          echo '<td>'.$node2.'</td>';
+                                          echo '<td><a href="http://www.jeuxdemots.org/rezo-dump.php?gotermsubmit=Chercher&gotermrel='.$node2.'">'.$node2.'</a></td>';
                                           echo '<td>'.$relationType.'</td>';
                                           echo '<td>'.$row[5].'</td>';
                                               
@@ -387,33 +385,32 @@
                                  </tr>
                               </thead>
                               <?php
-                              utf8_encode_deep($reloutArray);
-                              utf8_encode_deep($result2);
-                              utf8_encode_deep($result3);
+                                 utf8_encode_deep($reloutArray);
+                                 utf8_encode_deep($result2);
+                                 utf8_encode_deep($result3);
                                 foreach ($relinArray as $row)
                                {
                                   $node1 = null;
                                   $node2 = null;
                                   $relationType = null;
-                                  foreach($result2 as $line){
-                                     if($line[1] == $row[2]){
-                                         $node1 = $line[2];
-                                         //$node1 = $line[3];
-                                     }
-                                     if($line[1] == $row[3]){
-                                         $node2 = $line[2];
-                                         //$node2 = $line[3];
-                                     }
-                                 }
-
-                                 foreach($result3 as $index){
-                                    if($index[1] == $row[4]){
-                                       $relationType=$index[2];
+                                 
+                                 foreach($result2 as $line){
+                                    if($line[1] == $row[2]){
+                                        $node1 = trim($line[2],"''");
                                     }
-                                 }
+                                    if($line[1] == $row[3]){
+                                        $node2 = trim($line[2],"''");
+                                    }
+                                }
+
+                                foreach($result3 as $index){
+                                   if($index[1] == $row[4]){
+                                      $relationType=trim($index[2],"''");
+                                   }
+                                }
                                    echo '<tr>';
                                  
-                                       echo '<td>'.$node1.'</td>';
+                                       echo '<td><a href="http://www.jeuxdemots.org/rezo-dump.php?gotermsubmit=Chercher&gotermrel='.$node1.'">'.$node1.'</a></td>';
                                        echo '<td>'.$node2.'</td>';
                                        echo '<td>'.$relationType.'</td>';
                                        echo '<td>'.$row[5].'</td>';
