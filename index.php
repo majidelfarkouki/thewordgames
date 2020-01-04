@@ -58,7 +58,7 @@
                                     <input id="gotermrel" type="text" class="form-control input-sm"
                                        name="gotermrel" placeholder="Entrez le terme" require>
                                  </div>
-                                 <div class="form-group mb-2">
+                                 <div class="form-group mb-2&">
                                     Num&eacute;ro de relation
                                  </div>
                                  <div class="form-group mx-sm-3 mb-2">
@@ -100,9 +100,23 @@
                <!-- row -->
             </div>
             <?php
-               if (isset($_REQUEST['gotermsubmit'])) {
-                   $gotermrel = $_POST['gotermrel'];
-                   $numRel = $_POST['rel'];  
+               if ($method = $_SERVER['REQUEST_METHOD']) {
+                  if ($method == 'POST') {
+                      // Method is POST
+                    // echo "BYE";
+                    // die();
+                    $gotermrel = $_POST['gotermrel'];
+                    $numRel = $_POST['rel'];  
+                  } 
+                  if ($method == 'GET') {
+                      // Method is GET
+                    // echo "BYE 2";
+                    // die();
+                    $gotermrel = $_GET['mot'];
+                    $numRel = '';
+                  }
+                   
+
                    
                    $url = "http://www.jeuxdemots.org/rezo-dump.php?gotermsubmit=Chercher&gotermrel=" . $gotermrel . "&rel=".$numRel;
                
@@ -358,7 +372,7 @@
                                       echo '<tr>';
                                     
                                           echo '<td>'.$node1.'</td>';
-                                          echo '<td><a href="http://www.jeuxdemots.org/rezo-dump.php?gotermsubmit=Chercher&gotermrel='.$node2.'">'.$node2.'</a></td>';
+                                          echo '<td><a href="index.php?mot='.$node2.'"</a>'.$node2.'</td>';
                                           echo '<td>'.$relationType.'</td>';
                                           echo '<td>'.$row[5].'</td>';
                                               
@@ -409,8 +423,8 @@
                                    }
                                 }
                                    echo '<tr>';
-                                 
-                                       echo '<td><a href="http://www.jeuxdemots.org/rezo-dump.php?gotermsubmit=Chercher&gotermrel='.$node1.'">'.$node1.'</a></td>';
+                                      
+                                       echo '<td><a href="index.php?mot='.$node1.'"</a>'.$node1.'</td>'; 
                                        echo '<td>'.$node2.'</td>';
                                        echo '<td>'.$relationType.'</td>';
                                        echo '<td>'.$row[5].'</td>';
